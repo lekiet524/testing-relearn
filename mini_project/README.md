@@ -62,7 +62,7 @@ https://www.saucedemo.com/
 
 ### SQL Verification (concept):
 
-1. Mở [verify_login.sql](./sql-verify/verify_login.sql)
+1. Mở [verify_login.sql](./sql_verify/verify_login.sql)
 2. Chạy queries trên môi trường test database tương tự
 
 _Project thực hiện bởi: [Lê Tuấn Kiệt] - [22/3/2026]_  
