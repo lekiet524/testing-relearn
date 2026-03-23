@@ -1,5 +1,4 @@
 import {test, expect} from '@playwright/test';
-
 type LoginTestData = {
     name: string;
     username : string;
@@ -47,12 +46,13 @@ const testData: LoginTestData[] = [
 ];
 
 test('TC01: Login thành công',async({page}) => {
+    const VALID_USER = {username: 'standard_user', password: 'secret_sauce'};
     //1. Truy cập vào https://www.saucedemo.com/
     await page.goto('https://www.saucedemo.com/');
 
     //2. Nhập username và password
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="username"]').fill(VALID_USER.username);
+    await page.locator('[data-test="password"]').fill(VALID_USER.password);
 
     //3. Click login
     await page.locator('[data-test="login-button"]').click();
@@ -62,7 +62,7 @@ test('TC01: Login thành công',async({page}) => {
     await expect(page).toHaveURL(/.*inventory.html/);
     
     //5 Verify: Hiển thi danh sách sản phẩm
-    await expect(page.locator('.inventory_item_name').first()).toBeVisible();
+    await expect(page.locator('[data-test="inventory-item"]').first()).toBeVisible();
 
     console.log('Test passed: Login thành công')
     
@@ -114,3 +114,9 @@ testData.forEach((data) => {
     console.log('Test passed: Error handling đúng');
     })
 });
+test.afterEach(async({page},testInfo)  =>{
+    // Chụp screenshot nếu test fail
+    if(testInfo.status !== testInfo.expectedStatus) {
+        await page.screenshot({path:`screenshoot/${testInfo.title}.png`});
+    }
+})
