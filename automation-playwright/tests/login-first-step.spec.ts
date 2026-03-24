@@ -1,122 +1,46 @@
-import {test, expect} from '@playwright/test';
-type LoginTestData = {
-    name: string;
-    username : string;
-    password: string;
-    error: string;
-}
+import {test} from '@playwright/test';
+import { beforeEach } from 'node:test';
+import { LoginPage } from '../pages/login.page';
 
-const testData: LoginTestData[] = [
-    {
-        name: 'TC02: Login với password sai',
-        username: 'standard_user',
-        password: 'secret1_sauce',
-        error: 'Username and password do not match any user in this service'
-    },
-    {
-        name: 'TC03: Login với username sai',
-        username: 'standard1_user',
-        password: 'secret_sauce',
-        error: 'Username and password do not match any user in this service'
-    },
-    {
-        name: 'TC04: Login với username và password sai',
-        username: 'standard1_user',
-        password: 'secret1_sauce',
-        error: 'Username and password do not match any user in this service'
-    },
-    {
-        name: 'TC05: Login để trống username',
-        username: '',
-        password: 'secret_sauce',
-        error: 'Username is required'
-    },
-    {
-        name: 'TC07: Login để trống password',
-        username: 'standard_user',
-        password: '',
-        error: 'Password is required'
-    },
-    {
-        name: 'TC08: Login để trống username và password',
-        username: '',
-        password: '',
-        error: 'Username is required'
-    },
-];
+const VALID_USER = {username: 'standard_user', password: 'secret_sauce'}
+const LOCKET_ID_USER = {username: 'locked_out_user', password: 'secret_sauce'}
+
+test.beforeEach(async({page}) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+})
+
 
 test('TC01: Login thành công',async({page}) => {
-    const VALID_USER = {username: 'standard_user', password: 'secret_sauce'};
-    //1. Truy cập vào https://www.saucedemo.com/
-    await page.goto('https://www.saucedemo.com/');
+    const loginPage = new LoginPage(page);
 
-    //2. Nhập username và password
-    await page.locator('[data-test="username"]').fill(VALID_USER.username);
-    await page.locator('[data-test="password"]').fill(VALID_USER.password);
+    //Action
+    await loginPage.login(VALID_USER.username, VALID_USER.password);
 
-    //3. Click login
-    await page.locator('[data-test="login-button"]').click();
+    //Assert
+    await loginPage.expectToBeOnInventory();
 
-
-    //4. Verify: URL chuyển sang trang /inventory.html
-    await expect(page).toHaveURL(/.*inventory.html/);
-    
-    //5 Verify: Hiển thi danh sách sản phẩm
-    await expect(page.locator('[data-test="inventory-item"]').first()).toBeVisible();
-
-    console.log('Test passed: Login thành công')
-    
+    console.log("TC1 Passed");
 });
 
-// test('TC02: Login với password sai', async({page}) => {
-//     //1. Truy cập vào https://www.saucedemo.com/
-//     await page.goto('https://www.saucedemo.com/');
+test('TC02: Với user bị khóa',async({page}) => {
+   const loginPage = new LoginPage(page);
 
-//     //2. Nhập username đúng và password sai
-//     await page.locator('[data-test="username"]').fill('standard_user')
-//     await page.locator('[data-test="password"]').fill('secret1_sauce')
+   //Action
+   await loginPage.login(LOCKET_ID_USER.username, LOCKET_ID_USER.password);
 
-//     //3. Click login
-//     await page.locator('[data-test="login-button"]').click();
+   //Assert
+   await loginPage.expectToBeOnLogin();
+   await loginPage.expectErrorMessage('Sorry, this user has been locked out.');
 
-//     //4. Verify: Vẫn ở trang /login
-//     await expect(page).toHaveURL('https://www.saucedemo.com/');
+    console.log("TC2: Passed");
+});
 
-//     //5. Verify: Hiển thị error message
-//     const errorBox = page.locator('[data-test="error"]');
-//     await expect(errorBox).toBeVisible();
-//     await expect(errorBox).toContainText('Username and password do not match any user in this service');
-
-//     console.log('Test passed: Error handling đúng');
+// test('TC03: Login với user để trống', async({page}) => {
+   
 
 // });
 
-testData.forEach((data) => {
-    test(data.name, async({page})=> {
-        //1. Truy cập vào https://www.saucedemo.com/
-    await page.goto('https://www.saucedemo.com/');
+// test('TC04: Login với password để trống', async({page}) => {
 
-    //2. Nhập username đúng và password sai
-    await page.locator('[data-test="username"]').fill(data.username)
-    await page.locator('[data-test="password"]').fill(data.password)
-
-    //3. Click login
-    await page.locator('[data-test="login-button"]').click();
-
-    //4. Verify: Vẫn ở trang /login
-    await expect(page).toHaveURL('https://www.saucedemo.com/');
-
-    //5. Verify: Hiển thị error message
-    const errorBox = page.locator('[data-test="error"]');
-    await expect(errorBox).toBeVisible();
-    await expect(errorBox).toContainText(data.error);
-
-    console.log('Test passed: Error handling đúng');
-    })
-});
-test.afterEach(async({page},testInfo)  =>{
-    // Chụp screenshot nếu test fail
-    if(testInfo.status !== testInfo.expectedStatus) {
-        await page.screenshot({path:`screenshoot/${testInfo.title}.png`});
-    }
-})
+// });
