@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 
 export class LoginPage {
+    //Selector
     readonly page : Page
     readonly userNameInput: Locator
     readonly passwordInput: Locator
@@ -42,6 +43,8 @@ export class LoginPage {
     }
 
     async expectErrorMessage(expected: string) {
+        await this.errorMessage.waitFor({ state: 'visible', timeout: 5000 })
         await expect(this.errorMessage).toContainText(expected);
     }
 }
+export default LoginPage;
