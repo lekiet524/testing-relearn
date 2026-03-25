@@ -46,5 +46,15 @@ export class LoginPage {
         await this.errorMessage.waitFor({ state: 'visible', timeout: 5000 })
         await expect(this.errorMessage).toContainText(expected);
     }
+    //Chờ chuyển trang xong
+    async waitForNavigation() {
+        await this.page.waitForLoadState('networkidle');
+    }
+
+    async loginAndWait(username: string, password: string) {
+        await this.login(username, password);
+        await this.waitForNavigation();
+    }
+
 }
 export default LoginPage;
