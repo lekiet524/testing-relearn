@@ -4,7 +4,7 @@ name: Playwright Tests
 on: 
   push:
     braches: [master, main]
-  pull-request:
+  pull_request:
     braches: [master, main]
   workflow_dispatch:
 
