@@ -1,11 +1,11 @@
 name: Playwright Tests
 
 #trigger khi nào chạy
-on: 
+on:
   push:
-    braches: [master, main]
+    branches: [master, main]
   pull_request:
-    braches: [master, main]
+    branches: [master, main]
   workflow_dispatch:
 
 #jobs những việc cần làm
@@ -13,48 +13,47 @@ jobs:
   test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-  
-  step:
-  #1 Checkout code đã sẵn sàng
-  name: Checkout Code 
-  use: actions/checkout@v4
 
-  #2 Setup Nodejs Enviroment
-  name: Setup NodeJS Enviroment 
-  use: actions/setup-node@v4 
-  with:
-    node-version: 18
-    cache: 'npm'
-    cache-denpendency-path: automation-playwright/package-lock.json
-  
-  #3 Install denpendencies + browser
-  name: Install denpendencies
-  run: |
-    cd automation-playwright
-    npm ci
-    npx playwright install --with-deps
-  
-  #4 Run playwright test
-  name: Run Playwright Tests 
-  run: |
-    cd automation-playwright
-    npx playwright test --project=chromium --reporter=html
-  
-  #5 Upload HTML reporter làm artifact
-  name: Upload test report 
-  use: actions/upload-artifact@v4 
-  if: always()
-  with:
-    name: playwright-report-${{ github.run_member}}
-    path: automation-playwright/playwright-report/
-    retention-days: 30
+  steps:
+    #1 Checkout code đã sẵn sàng
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-  #6 Upload screenshots khi fail
-  name: Upload screenshots on failure
-  use: actions/upload-artifact@v4 
-  if: failure()
-  with: 
-    name: screenshots-fail-${{ github.run_member}}
-    path: automation-playwright/test-results/
-    retention-days: 7
+    #2 Setup Nodejs Enviroment
+    - name: Setup NodeJS Enviroment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: "npm"
+        cache-dependency-path: automation-playwright/package-lock.json
 
+    #3 Install dependencies + browser
+    - name: Install dependencies
+      run: |
+        cd automation-playwright
+        npm ci
+        npx playwright install --with-deps
+
+    #4 Run playwright test
+    - name: Run Playwright Tests
+      run: |
+        cd automation-playwright
+        npx playwright test --project=chromium --reporter=html
+
+    #5 Upload HTML reporter làm artifact
+    - name: Upload test report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ github.run_number}}
+        path: automation-playwright/playwright-report/
+        retention-days: 30
+
+    #6 Upload screenshots khi fail
+    - name: Upload screenshots on failure
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: screenshots-fail-${{ github.run_number}}
+        path: automation-playwright/test-results/
+        retention-days: 7
