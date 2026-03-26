@@ -47,7 +47,7 @@ test('TC10: Verify product list after login successful ', async({page})=> {
     await expect(items.first().locator('.inventory_item_name')).toHaveText('Sauce Labs Backpack');
 
     //Verify giá sản phẩm phải là $
-    await expect(items.first().locator('.inventory_item_pric')).toContainText('$');
+    await expect(items.first().locator('.inventory_item_price')).toContainText('$');
 
     console.log("TC10 Passed")
 })
