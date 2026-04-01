@@ -1,0 +1,50 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "standard_user",
+      "password": "secret_sauce",
+      "token": "abc123",
+      "locked": false
+    },
+    {
+      "id": 2,
+      "username": "locked_user",
+      "password": "secret_sauce",
+      "token": "xyz456",
+      "locked": true
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Backpack",
+      "price": 29.99
+    },
+    {
+      "id": 2,
+      "name": "Bike Light",
+      "price": 9.99
+    }
+  ],
+  "cart": [
+    {
+      "id": 1775047397335,
+      "product_id": 2,
+      "quantity": 3
+    }
+  ],
+  "orders": [
+    {
+      "id": 1775047960986,
+      "items": [
+        {
+          "id": 1775047397335,
+          "product_id": 2,
+          "quantity": 3
+        }
+      ],
+      "total": 100
+    }
+  ]
+}
